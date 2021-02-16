@@ -1,9 +1,6 @@
 /* jshint esversion: 6 */
 
-console.log("load ui.js");
-
 class Ui extends pc.ScriptType {
-    
 
     initialize() {
         this.setupMainContainer();

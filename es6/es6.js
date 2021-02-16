@@ -3,14 +3,7 @@ import pc from "./pc.js";
 import {load_ammo} from "./load_ammo.js";
 import {load_helipad} from "./load_helipad.js";
 
-
-
 async function demo() {
-    await init();
-    //await main();
-}
-
-async function init() {
     // create a PlayCanvas application
     const canvas = document.getElementById('application');
     const app = new pc.Application(canvas, {
@@ -19,6 +12,15 @@ async function init() {
     });
     
     app.start();
+
+    await Promise.all([
+        import("./example.js"),
+        import("./trigger.js"),
+        import("./ui.js"),
+        import("./orbit-camera.js"),
+        import("./rotate.js"),
+    ]);
+
     // fill the available space at full resolution
     app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
     app.setCanvasResolution(pc.RESOLUTION_AUTO);
@@ -31,7 +33,9 @@ async function init() {
     box.addComponent('model', {
         type: 'box'
     });
-    //app.root.addChild(box);
+    app.root.addChild(box);
+    box.addComponent('script');
+    box.script.create('rotate');
 
     // create camera entity
     const camera = new pc.Entity('camera');
@@ -128,28 +132,9 @@ async function init() {
         restitution: 0,
         type: "dynamic"
     });
-    Object.assign(window, {
-        box1,
-        box2,
-        box3,
-        trigger,
-        camera,
-        app,
-        canvas,
-        createBox
-    });
-
-    import("./example.js");
-    import("./trigger.js");
-    import("./ui.js");
-
-
-
-
 
     camera.addComponent("script");
-    await import("./orbit-camera.js");
-    //return;
+
     const orbitCamera = camera.script.create('orbitCamera');
     const keyboardInput = camera.script.create('keyboardInput');
     const mouseInput = camera.script.create('mouseInput');
@@ -158,30 +143,24 @@ async function init() {
     orbitCamera.yaw = 50;
     orbitCamera.pitch = -25;
 
-
-    load_helipad();
+    load_helipad(app);
 
     const example = new pc.Entity("example");
+    app.root.addChild(example);
     example.addComponent("script");
     const exampleScript = example.script.create("example");
-    console.log("exampleScript", exampleScript);
-    if (exampleScript) {
-        console.log("exampleScript defined")
-        exampleScript.initialize();
-        exampleScript.spawnCube();
-        setInterval(x=>example.script.scripts[0].update(1/60), 1/60);
-    } else {
-        console.log("exampleScript NOT defined")
-        setTimeout(function() {
-            // why is this undefined without timeout?!
-            example.script.scripts[0].initialize();
-            example.script.scripts[0].spawnCube();
-            setInterval(x=>example.script.scripts[0].update(1/60), 1/60);
-        }, 100)
-    }
+    
 
     // Nothing is exported by default, so assign objects to window manually for easy testing/debugging
     Object.assign(window, {
+        box1,
+        box2,
+        box3,
+        trigger,
+        camera,
+        app,
+        canvas,
+        createBox,
         orbitCamera,
         keyboardInput,
         mouseInput,

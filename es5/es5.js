@@ -9,6 +9,8 @@ var box1;
 var box2;
 var box3;
 var cube;
+var example;
+var exampleScript;
 
 function loadOrbitCamera() {
     // Make the camera interactive
@@ -168,24 +170,10 @@ function init_preloaded() {
     load_helipad();
     loadOrbitCamera();
     
-    const example = new pc.Entity("example");
+    example = new pc.Entity("example");
+    app.root.addChild(example);
     example.addComponent("script");
-    const exampleScript = example.script.create("example");
-    console.log("exampleScript", exampleScript);
-    if (exampleScript) {
-        console.log("exampleScript defined")
-        exampleScript.initialize();
-        exampleScript.spawnCube();
-        setInterval(x=>exampleScript.update(1/60), 1/60);
-    } else {
-        console.log("exampleScript NOT defined")
-        setTimeout(function() {
-            // why is this undefined without timeout?!
-            example.script.scripts[0].initialize();
-            example.script.scripts[0].spawnCube();
-            setInterval(x=>example.script.scripts[0].update(1/60), 1/60);
-        }, 100)
-    }
+    exampleScript = example.script.create("example");
 }
 
 load_ammo(init_scripts);

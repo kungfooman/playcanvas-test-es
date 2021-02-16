@@ -3,13 +3,12 @@
 import pc from "./pc.js";
 import AmmoDebugDrawer from "./ammo-debug-drawer.js";
 
-console.log("load example.js");
-
 class Example extends pc.ScriptType {
-    constructor(args) {
-        super(args);
-        console.log("args", args);
-    }
+    //constructor(args) {
+    //    super(args);
+    //    console.log("args", args);
+    //}
+
     initialize() {
         this.renderer = new AmmoDebugDrawer(undefined, this.app);
         this.renderer.enable();
@@ -65,16 +64,22 @@ class Example extends pc.ScriptType {
     }
     
     changeMode(mode) {
-        if (!this.renderer) return;
+        if (!this.renderer) {
+            return;
+        }
         this.renderer.setMode(mode);
     }
     
     update(dt) {
-        if (!this.renderer) return;
+        if (!this.renderer) {
+            return;
+        }
         
         this.renderer.update();
         
-        if (!this.ready || this.allSpawned) return;
+        if (!this.ready || this.allSpawned) {
+            return;
+        }
         
         this.time += dt;
         

@@ -1,7 +1,5 @@
 /* jshint esversion: 6 */
 
-console.log("load trigger.js");
-
 class Trigger extends pc.ScriptType {
     
     initialize() {

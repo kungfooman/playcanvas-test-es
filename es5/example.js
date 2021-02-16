@@ -1,7 +1,3 @@
-/* jshint esversion: 6 */
-
-console.log("load example.js");
-
 var Example = pc.createScript('example');
 
 Example.prototype.initialize = function() {
@@ -31,7 +27,7 @@ Example.prototype.generateCubes = function() {
     const height = Example.SPAWN_HEIGHT;
     
     this.cubes = [];
-    for (let i = 0; i < amount; i++) {
+    for (var i = 0; i < amount; i++) {
         const clone = cube.clone();
         const x = pc.math.random(-8, 8);
         const y = height;
@@ -59,16 +55,22 @@ Example.prototype.spawnCube = function() {
 }
 
 Example.prototype.changeMode = function(mode) {
-    if (!this.renderer) return;
+    if (!this.renderer) {
+        return;
+    }
     this.renderer.setMode(mode);
 }
 
 Example.prototype.update = function(dt) {
-    if (!this.renderer) return;
+    if (!this.renderer) {
+        return;
+    }
     
     this.renderer.update();
     
-    if (!this.ready || this.allSpawned) return;
+    if (!this.ready || this.allSpawned) {
+        return;
+    }
     
     this.time += dt;
     

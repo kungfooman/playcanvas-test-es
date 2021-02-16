@@ -1,4 +1,4 @@
-export function load_helipad() {
+export function load_helipad(app) {
     // Set a prefiltered cubemap as the skybox
     var cubemapAsset = new pc.Asset('helipad', 'cubemap', {
         url: "./assets/cubemap/6079289/Helipad.dds"
