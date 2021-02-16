@@ -133,10 +133,10 @@
 			const cube = createBox("Cube");
 			cube.enabled = false;
 			cube.addComponent("collision", {
-				axis: 0,
+				//axis: 0,
 				height: 2,
 				radius: 0.5,
-				type: "capsule"
+				type: "box"
 			});
 			cube.addComponent("rigidbody", {
 				angularDamping: 0,
@@ -207,12 +207,21 @@
 			const example = new pc.Entity("example");
 			example.addComponent("script");
 			const exampleScript = example.script.create("example");
-			setTimeout(function() {
-				// why is this undefined without timeout?!
-				example.script.scripts[0].initialize();
-				example.script.scripts[0].spawnCube();
-				setInterval(x=>example.script.scripts[0].update(1/60), 1/60)
-			}, 100)
+			console.log("exampleScript", exampleScript);
+			if (exampleScript) {
+				console.log("exampleScript defined")
+				exampleScript.initialize();
+				exampleScript.spawnCube();
+				setInterval(x=>example.script.scripts[0].update(1/60), 1/60);
+			} else {
+				console.log("exampleScript NOT defined")
+				setTimeout(function() {
+					// why is this undefined without timeout?!
+					example.script.scripts[0].initialize();
+					example.script.scripts[0].spawnCube();
+					setInterval(x=>example.script.scripts[0].update(1/60), 1/60);
+				}, 100)
+			}
 
 
 			Object.assign(window, {
