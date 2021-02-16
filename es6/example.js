@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 
 import pc from "./pc.js";
+import AmmoDebugDrawer from "./ammo-debug-drawer.js";
 
 console.log("load example.js");
 

@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-class AmmoDebugDrawer {
+export default class AmmoDebugDrawer {
     
     constructor(layer, app) {
         const drawer = new Ammo.DebugDrawer();
@@ -75,5 +75,3 @@ class AmmoDebugDrawer {
     }
     
 }
-
-window.AmmoDebugDrawer = AmmoDebugDrawer;
