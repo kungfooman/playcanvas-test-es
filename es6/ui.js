@@ -147,5 +147,12 @@ class Ui extends pc.ScriptType {
 
 pc.registerScript(Ui, 'ui');
 
-Ui.attributes.add('html', { type: 'asset', assetType: 'html' });
-Ui.attributes.add('profile', { type: 'asset', assetType: 'texture' });
+Ui.attributes.add('html', {
+    type: 'asset',
+    assetType: 'html'
+});
+
+Ui.attributes.add('profile', {
+    type: 'asset',
+    assetType: 'texture'
+});
