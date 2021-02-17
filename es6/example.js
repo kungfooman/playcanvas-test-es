@@ -4,13 +4,9 @@ import pc from "./pc.js";
 import AmmoDebugDrawer from "./ammo-debug-drawer.js";
 
 class Example extends pc.ScriptType {
-    //constructor(args) {
-    //    super(args);
-    //    console.log("args", args);
-    //}
 
     initialize() {
-        this.renderer = new AmmoDebugDrawer(undefined, this.app);
+        this.renderer = new AmmoDebugDrawer();
         this.renderer.enable();
         
         this.bindEvents();

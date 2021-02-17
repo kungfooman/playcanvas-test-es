@@ -1,7 +1,7 @@
 var Example = pc.createScript('example');
 
 Example.prototype.initialize = function() {
-    this.renderer = new AmmoDebugDrawer(undefined, this.app);
+    this.renderer = new AmmoDebugDrawer();
     this.renderer.enable();
     
     this.bindEvents();

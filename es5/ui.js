@@ -65,12 +65,13 @@ class Ui extends pc.ScriptType {
             headerText: 'Render Mode'
         });
         const content = panel.content;
-
+        
         const options = [
             { v: 0, t: 'Disable' },
             { v: 1, t: 'Wireframe' },
             { v: 2, t: 'Bounding Boxes' },
             { v: 3, t: 'Wireframe + AABB' },
+            { v: 8, t: 'Contact Points' },
         ];
         const input = new SelectInput({ 
             options,

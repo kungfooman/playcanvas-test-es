@@ -2,7 +2,7 @@
 
 export default class AmmoDebugDrawer {
     
-    constructor(layer, app) {
+    constructor(layer) {
         const drawer = new Ammo.DebugDrawer();
         drawer.drawLine = this.drawLine.bind(this);
         drawer.drawContactPoint = this.drawContactPoint.bind(this);
@@ -14,7 +14,7 @@ export default class AmmoDebugDrawer {
         drawer.disable = this.disable.bind(this);
         drawer.update = this.update.bind(this);
         
-        this.app = app;
+        this.app = pc.Application.getApplication();
         
         const world = this.app.systems.rigidbody.dynamicsWorld;
         world.setDebugDrawer(drawer);
@@ -22,6 +22,7 @@ export default class AmmoDebugDrawer {
         
         this._v1 = new pc.Vec3();
         this._v2 = new pc.Vec3();
+        this._v3 = new pc.Vec3();
         this.color = new pc.Color(1, 1, 0, 1);
         
         this._debugDrawMode = 1;
@@ -43,7 +44,24 @@ export default class AmmoDebugDrawer {
         this._enabled = false;
     }
     
-    drawContactPoint(pointOnB, normalOnB, distance, lifeTime, color) {}
+    drawContactPoint(pointOnB, normalOnB, distance, lifeTime, color) {
+        const p = Ammo.wrapPointer(pointOnB, Ammo.btVector3);
+        const n = Ammo.wrapPointer(normalOnB, Ammo.btVector3);
+        const c = Ammo.wrapPointer(color, Ammo.btVector3);
+        this.color.set(c.x(), c.y(), c.z(), 1);
+        
+        const from = this._v1;
+        const to = this._v2;
+        const dir = this._v3;
+        
+        from.set(p.x(), p.y(), p.z());
+        dir.set(n.x(), n.y(), n.z()).scale(0.5);
+        to.copy(from).add(dir);
+        
+        this.app.renderLine(from, to, this.color, {
+            layer: this.layer
+        });
+    }
     
     reportErrorWarning(warningString) {}
     
@@ -65,6 +83,8 @@ export default class AmmoDebugDrawer {
     drawLine(from, to, color) {
         const f = Ammo.wrapPointer(from, Ammo.btVector3);
         const t = Ammo.wrapPointer(to, Ammo.btVector3);
+        const c = Ammo.wrapPointer(color, Ammo.btVector3);
+        this.color.set(c.x(), c.y(), c.z(), 1);
         
         this._v1.set(f.x(), f.y(), f.z());
         this._v2.set(t.x(), t.y(), t.z());
@@ -73,5 +93,5 @@ export default class AmmoDebugDrawer {
             layer: this.layer
         });
     }
-    
+
 }
