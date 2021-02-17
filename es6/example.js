@@ -3,7 +3,7 @@
 import pc from "./pc.js";
 import AmmoDebugDrawer from "./ammo-debug-drawer.js";
 
-class Example extends pc.ScriptType {
+export default class Example extends pc.ScriptType {
 
     initialize() {
         this.renderer = new AmmoDebugDrawer();

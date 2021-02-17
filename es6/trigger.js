@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
 
+import Example from "./example.js";
+
 class Trigger extends pc.ScriptType {
     
     initialize() {

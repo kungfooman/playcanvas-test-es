@@ -131,18 +131,16 @@ export async function demo() {
     // rotate the box according to the delta time since the last frame
     //app.on('update', dt => box.rotate(10 * dt, 20 * dt, 30 * dt));
     
-    trigger = createBox("Trigger");
+    trigger = new pc.Entity("Trigger");
+    app.root.addChild(trigger);
     trigger.setLocalPosition(0, -6.967, 0);
     trigger.setLocalScale(40, 0.2, 40);
     trigger.addComponent("collision", {
         type: "box",
         halfExtents: new pc.Vec3(20, 0.1, 20)
     });
-    trigger.addComponent("rigidbody", {
-        type: "static",
-        restitution: 0.5
-    });
-    
+    trigger.addComponent("script");
+    trigger.script.create("trigger");
 
     // Color fox boxes
     var violet = new pc.StandardMaterial();
