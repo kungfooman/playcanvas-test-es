@@ -11,29 +11,19 @@ var box3;
 var cube;
 var example;
 var exampleScript;
+var orbitCamera;
+var keyboardInput;
+var mouseInput;
 
 function loadOrbitCamera() {
-    // Make the camera interactive
-    //app.assets.loadFromUrl('./orbit-camera.js', 'script', function (err, asset) {
-        //camera.script.create('orbitCamera');
-        //camera.script.create('keyboardInput');
-        //camera.script.create('mouseInput');
-
-        //if (this.cameraPosition) {
-        //    camera.script.orbitCamera.distance = this.cameraPosition.length();
-        //} else if (this.gltf) {
-        //    camera.script.orbitCamera.focusEntity = this.gltf;
-        //}
-
-        camera.addComponent("script");
-        const orbitCamera   = camera.script.create('orbitCamera');
-        const keyboardInput = camera.script.create('keyboardInput');
-        const mouseInput   = camera.script.create('mouseInput');
-        orbitCamera.focusEntity = trigger;
-        orbitCamera.distance = 50;
-        orbitCamera.yaw = 50;
-        orbitCamera.pitch = -25;
-    //}.bind(this));
+    camera.addComponent("script");
+    orbitCamera   = camera.script.create('orbitCamera');
+    keyboardInput = camera.script.create('keyboardInput');
+    mouseInput   = camera.script.create('mouseInput');
+    orbitCamera.focusEntity = trigger;
+    orbitCamera.distance = 50;
+    orbitCamera.yaw = 50;
+    orbitCamera.pitch = -25;
 }
 
 function createBox(name) {
@@ -60,7 +50,8 @@ function init_scripts() {
         "./es5/ammo-debug-drawer.js",
         "./es5/orbit-camera.js",
         "./es5/trigger.js",
-        "./es5/ui.js"
+        "./es5/ui.js",
+        "./es5/rotate.js",
     ]);
 }
 
@@ -77,7 +68,9 @@ function init_preloaded() {
     box.addComponent('model', {
         type: 'box'
     });
-    //app.root.addChild(box);
+    app.root.addChild(box);
+    box.addComponent("script");
+    box.script.create("rotate");
 
     // create camera entity
     camera = new pc.Entity('camera');
@@ -151,19 +144,12 @@ function init_preloaded() {
     cube = createBox("Cube");
     cube.enabled = false;
     cube.addComponent("collision", {
-        axis: 0,
-        height: 2,
-        radius: 0.5,
-        type: "capsule"
+        type: "box",
+        halfExtents: new pc.Vec3(0.5, 0.5, 0.5),
     });
     cube.addComponent("rigidbody", {
-        angularDamping: 0,
-        angularFactor: pc.Vec3.ZERO,
-        friction: 0.3,
-        linearDamping: 0,
-        linearFactor: pc.Vec3.ONE,
-        mass: 80,
-        restitution: 0,
+        mass: 10,
+        restitution: 0.5,
         type: "dynamic"
     });
 

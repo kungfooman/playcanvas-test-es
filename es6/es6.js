@@ -117,19 +117,12 @@ async function demo() {
     const cube = createBox("Cube");
     cube.enabled = false;
     cube.addComponent("collision", {
-        //axis: 0,
-        height: 2,
-        radius: 0.5,
-        type: "box"
+        type: "box",
+        halfExtents: new pc.Vec3(0.5, 0.5, 0.5),
     });
     cube.addComponent("rigidbody", {
-        angularDamping: 0,
-        angularFactor: pc.Vec3.ZERO,
-        friction: 0.3,
-        linearDamping: 0,
-        linearFactor: pc.Vec3.ONE,
-        mass: 80,
-        restitution: 0,
+        mass: 10,
+        restitution: 0.5,
         type: "dynamic"
     });
 
