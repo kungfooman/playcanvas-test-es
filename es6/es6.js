@@ -3,37 +3,37 @@ import "../pcui/pcui.js";
 import {load_ammo} from "./load_ammo.js";
 import {load_helipad} from "./load_helipad.js";
 
-let canvas;
-let app;
-let scriptPreloader;
-let camera;
-let box;
-let light;
-let trigger;
-let box1;
-let box2;
-let box3;
-let cube;
-let example;
-let exampleScript;
-let orbitCamera;
-let keyboardInput;
-let mouseInput;
-let uiEntity;
-let uiScript;
-let uiAsset;
-let uiAssetProfile;
+export let canvas;
+export let app;
+export let scriptPreloader;
+export let camera;
+export let box;
+export let light;
+export let trigger;
+export let box1;
+export let box2;
+export let box3;
+export let cube;
+export let example;
+export let exampleScript;
+export let orbitCamera;
+export let keyboardInput;
+export let mouseInput;
+export let uiEntity;
+export let uiScript;
+export let uiAsset;
+export let uiAssetProfile;
 
-function load_ui() {
+export function load_ui() {
     uiAsset = new pc.Asset("UI HTML", "html", {
         url: "./es5/ui.html"
     });
-    app.assets.add(uiAsset);
+
     uiAssetProfile = new pc.Asset("UI HTML", "texture", {
         url: "./es5/profile.jpg"
     });
-    app.assets.add(uiAssetProfile);
 
+    // Create UI entity with assets (non-loaded yet)
     uiEntity = new pc.Entity("UI");
     app.root.addChild(uiEntity);
     uiEntity.addComponent("script");
@@ -43,9 +43,34 @@ function load_ui() {
             profile: uiAssetProfile
         }
     });
+
+    // As soon the assets loaded, update the UI:
+
+    // HTML
+    uiAsset.ready(function() {
+        uiScript.setMedia();
+    });
+    app.assets.add(uiAsset);
+    app.assets.load(uiAsset);
+
+    // PROFILE
+    uiAssetProfile.ready(function() {
+        uiScript.setProfile();
+    })
+    app.assets.add(uiAssetProfile);
+    app.assets.load(uiAssetProfile);
 }
 
-async function demo() {
+export function createBox(name) {
+    let box = new pc.Entity(name);
+    box.addComponent('model', {
+        type: 'box'
+    });
+    app.root.addChild(box);
+    return box;
+}
+
+export async function demo() {
     // create a PlayCanvas application
     canvas = document.getElementById('application');
     app = new pc.Application(canvas, {
@@ -97,15 +122,6 @@ async function demo() {
 
     // rotate the box according to the delta time since the last frame
     //app.on('update', dt => box.rotate(10 * dt, 20 * dt, 30 * dt));
-
-    function createBox(name) {
-        box = new pc.Entity(name);
-        box.addComponent('model', {
-            type: 'box'
-        });
-        app.root.addChild(box);
-        return box;
-    }
     
     trigger = createBox("Trigger");
     trigger.setLocalPosition(0, -6.967, 0);
@@ -186,24 +202,8 @@ async function demo() {
     app.root.addChild(example);
     example.addComponent("script");
     exampleScript = example.script.create("example");
-    
-
-    // Nothing is exported by default, so assign objects to window manually for easy testing/debugging
-    Object.assign(window, {
-        box1,
-        box2,
-        box3,
-        trigger,
-        camera,
-        app,
-        canvas,
-        createBox,
-        orbitCamera,
-        keyboardInput,
-        mouseInput,
-        example,
-        exampleScript
-    });
 }
 
-load_ammo(demo);
+export function start() {
+    load_ammo(demo);
+}

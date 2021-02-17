@@ -63,12 +63,12 @@ function load_ui() {
     uiAsset = new pc.Asset("UI HTML", "html", {
         url: "./es5/ui.html"
     });
-    app.assets.add(uiAsset);
+
     uiAssetProfile = new pc.Asset("UI HTML", "texture", {
         url: "./es5/profile.jpg"
     });
-    app.assets.add(uiAssetProfile);
 
+    // Create UI entity with assets (non-loaded yet)
     uiEntity = new pc.Entity("UI");
     app.root.addChild(uiEntity);
     uiEntity.addComponent("script");
@@ -78,6 +78,22 @@ function load_ui() {
             profile: uiAssetProfile
         }
     });
+
+    // As soon the assets loaded, update the UI:
+
+    // HTML
+    uiAsset.ready(function() {
+        uiScript.setMedia();
+    });
+    app.assets.add(uiAsset);
+    app.assets.load(uiAsset);
+
+    // PROFILE
+    uiAssetProfile.ready(function() {
+        uiScript.setProfile();
+    })
+    app.assets.add(uiAssetProfile);
+    app.assets.load(uiAssetProfile);
 }
 
 function init_preloaded() {

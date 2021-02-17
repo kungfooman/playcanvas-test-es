@@ -13,6 +13,10 @@
     </head>
     <body>
         <canvas id='application'></canvas>
-        <script type="module" src="./es6/es6.js"></script>
+        <script type="module">
+            import * as demo from "./es6/es6.js";
+            demo.start();
+            window.demo = demo;
+        </script>
     </body>
 </html>

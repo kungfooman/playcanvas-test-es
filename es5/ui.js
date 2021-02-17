@@ -19,6 +19,7 @@ class Ui extends pc.ScriptType {
         });
         
         container.style.position = 'absolute';
+        container.style.height = '100%';
         container.style.left = '0px';
         container.style.top = '0px';
         
@@ -89,6 +90,35 @@ class Ui extends pc.ScriptType {
         this.pane.appendChild(divider.dom);
     }
     
+    setMedia() {
+        if (!this.html) {
+            console.warn("ui.js: this.html is missing");
+            return;
+        }
+        this.media.innerHTML = this.html.resource || '';
+    }
+
+    setProfile() {
+        let image;
+        if (this.profile && this.profile.loaded) {
+            const url = this.profile.getFileUrl();
+            image = document.createElement('img');
+            image.src = url;
+            image.width = 70;
+        } else {
+            console.warn("ui.js: profile is missing");
+            return;
+        }
+        const avatar = document.getElementById('avatar');
+        if (avatar) {
+            avatar.appendChild(image);
+            avatar.style['text-align'] = 'center';
+        } else {
+            console.warn("ui.js: avatar not found");
+            return;
+        }
+    }
+
     addMediaInfo() {
         const { Container } = pcui;
         
@@ -96,34 +126,22 @@ class Ui extends pc.ScriptType {
             flex: true,
         });
         
-        const media = document.createElement('div');
-        media.innerHTML = this.html.resource || '';
+        this.media = document.createElement('div');
+        this.setMedia();
         
         container.style.marginTop = 'auto';
         container.style.marginBottom = 'auto';
         container.style.marginLeft = 'auto';
         container.style.marginRight = 'auto';
         
-        container.dom.appendChild(media);
+        container.dom.appendChild(this.media);
         
         //twttr.widgets.load();
         
         this.pane.appendChild(container.dom);
-        
-        const url = this.profile.getFileUrl();
-        const image = document.createElement('img');
-        image.src = url;
-        image.width = 70;
-        
-        var avatar = document.getElementById('avatar');
-        if (avatar) {
-            avatar.appendChild(image);
-            avatar.style['text-align'] = 'center';
-        } else {
-            console.warn("ui.js: avatar not found");
-        }
+        this.setProfile();
     }
-    
+
 }
 
 pc.registerScript(Ui, 'ui');
