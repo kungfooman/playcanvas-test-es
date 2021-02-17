@@ -6,7 +6,7 @@ import AmmoDebugDrawer from "./ammo-debug-drawer.js";
 export default class Example extends pc.ScriptType {
 
     initialize() {
-        this.renderer = new AmmoDebugDrawer();
+        this.renderer = new AmmoDebugDrawer(this.layer);
         this.renderer.enable();
         
         this.bindEvents();
@@ -85,6 +85,13 @@ export default class Example extends pc.ScriptType {
     }
     
 }
+
+Example.attributes.add('layer', {
+    type: 'object', 
+    //default: ?, 
+    title: 'Layer', 
+    description: 'Which Layer to print the debug lines on'
+});
 
 pc.registerScript(Example, 'example');
 

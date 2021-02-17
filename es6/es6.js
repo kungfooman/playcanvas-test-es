@@ -23,6 +23,8 @@ export let uiEntity;
 export let uiScript;
 export let uiAsset;
 export let uiAssetProfile;
+export let layerDebugDraw;
+export let cameraDebugDraw;
 
 export function load_ui() {
     uiAsset = new pc.Asset("UI HTML", "html", {
@@ -70,7 +72,7 @@ export function createBox(name) {
     return box;
 }
 
-export async function demo() {
+export async function init() {
     // create a PlayCanvas application
     canvas = document.getElementById('application');
     app = new pc.Application(canvas, {
@@ -213,12 +215,25 @@ export async function demo() {
 
     load_helipad(app);
 
+    layerDebugDraw = new pc.Layer({name: "Debug Draw"});
+    app.scene.layers.pushTransparent(layerDebugDraw);
+    cameraDebugDraw = new pc.Entity("Camera Debug Draw");
+    camera.addChild(cameraDebugDraw);
+    cameraDebugDraw.addComponent("camera", {
+        layers: [layerDebugDraw.id]
+    });
+    cameraDebugDraw.camera.clearColorBuffer = false;
+
     example = new pc.Entity("example");
     app.root.addChild(example);
     example.addComponent("script");
-    exampleScript = example.script.create("example");
+    exampleScript = example.script.create("example", {
+        attributes: {
+            layer: layerDebugDraw
+        }
+    });
 }
 
 export function start() {
-    load_ammo(demo);
+    load_ammo(init);
 }

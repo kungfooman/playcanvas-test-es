@@ -1,7 +1,14 @@
 var Example = pc.createScript('example');
 
+Example.attributes.add('layer', {
+    type: 'object', 
+    //default: ?, 
+    title: 'Layer', 
+    description: 'Which Layer to print the debug lines on'
+});
+
 Example.prototype.initialize = function() {
-    this.renderer = new AmmoDebugDrawer();
+    this.renderer = new AmmoDebugDrawer(this.layer);
     this.renderer.enable();
     
     this.bindEvents();

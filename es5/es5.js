@@ -18,6 +18,8 @@ var uiEntity;
 var uiScript;
 var uiAsset;
 var uiAssetProfile;
+var layerDebugDraw;
+var cameraDebugDraw;
 
 function loadOrbitCamera() {
     camera.addComponent("script");
@@ -210,11 +212,24 @@ function init_preloaded() {
 
     load_helipad();
     loadOrbitCamera();
-    
+
+    layerDebugDraw = new pc.Layer({name: "Debug Draw"});
+    app.scene.layers.pushTransparent(layerDebugDraw);
+    cameraDebugDraw = new pc.Entity("Camera Debug Draw");
+    camera.addChild(cameraDebugDraw);
+    cameraDebugDraw.addComponent("camera", {
+        layers: [layerDebugDraw.id]
+    });
+    cameraDebugDraw.camera.clearColorBuffer = false;
+
     example = new pc.Entity("example");
     app.root.addChild(example);
     example.addComponent("script");
-    exampleScript = example.script.create("example");
+    exampleScript = example.script.create("example", {
+        attributes: {
+            layer: layerDebugDraw
+        }
+    });
 }
 
 load_ammo(init_scripts);

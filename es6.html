@@ -17,6 +17,9 @@
             import * as demo from "./es6/es6.js";
             demo.start();
             window.demo = demo;
+            // splice demo vars into window, so debugging is just like in ES5 (global variables)
+            // TODO: doesn't work, need dynamic getters/setters
+            //Object.assign(window, demo);
         </script>
     </body>
 </html>
