@@ -123,7 +123,14 @@ function init_preloaded() {
 
     // create directional light entity
     light = new pc.Entity('light');
-    light.addComponent('light');
+    light.addComponent('light', {
+        type: "directional",
+        color: new pc.Color(0.8, 0.8, 0.8),
+        castShadows: true,
+        //shadowBias: 0.05,
+        //normalOffsetBias: 0.05,
+        //shadowResolution: 2048
+    });
     app.root.addChild(light);
     light.setEulerAngles(45, 0, 0);
 
@@ -144,7 +151,13 @@ function init_preloaded() {
         restitution: 0.5
     });
     
+    // Color fox boxes
+    var violet = new pc.StandardMaterial();
+    violet.diffuse.set(138/255,43/255,226/255);
+    violet.update();
+
     box1 = createBox("Box 1");
+    box1.model.material = violet;
     box1.setLocalPosition(-4.174, 2.428, 2.937);
     box1.setLocalEulerAngles(-28.58, 0, -34.25);
     box1.setLocalScale(8, 0.1, 8);
@@ -158,6 +171,7 @@ function init_preloaded() {
     });
 
     box2 = createBox("Box 2");
+    box2.model.material = violet;
     box2.setLocalPosition(-5.966, 1.56, -8.398);
     box2.setLocalEulerAngles(0.03, 6.33, 0.94);
     box2.setLocalScale(8, 0.1, 8);
@@ -171,6 +185,7 @@ function init_preloaded() {
     });
 
     box3 = createBox("Box 3");
+    box3.model.material = violet;
     box3.setLocalPosition(3.697, 0.896, -4.896);
     box3.setLocalEulerAngles(172.67, 6.9, -162.31);
     box3.setLocalScale(8, 0.1, 8);
