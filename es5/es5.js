@@ -14,6 +14,10 @@ var exampleScript;
 var orbitCamera;
 var keyboardInput;
 var mouseInput;
+var uiEntity;
+var uiScript;
+var uiAsset;
+var uiAssetProfile;
 
 function loadOrbitCamera() {
     camera.addComponent("script");
@@ -55,6 +59,27 @@ function init_scripts() {
     ]);
 }
 
+function load_ui() {
+    uiAsset = new pc.Asset("UI HTML", "html", {
+        url: "./es5/ui.html"
+    });
+    app.assets.add(uiAsset);
+    uiAssetProfile = new pc.Asset("UI HTML", "texture", {
+        url: "./es5/profile.jpg"
+    });
+    app.assets.add(uiAssetProfile);
+
+    uiEntity = new pc.Entity("UI");
+    app.root.addChild(uiEntity);
+    uiEntity.addComponent("script");
+    uiScript = uiEntity.script.create("ui", {
+        attributes: {
+            html: uiAsset,
+            profile: uiAssetProfile
+        }
+    });
+}
+
 function init_preloaded() {
     // fill the available space at full resolution
     app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
@@ -89,6 +114,7 @@ function init_preloaded() {
     // rotate the box according to the delta time since the last frame
     //app.on('update', dt => box.rotate(10 * dt, 20 * dt, 30 * dt));
 
+    load_ui();
     
     trigger = createBox("Trigger");
     trigger.setLocalPosition(0, -6.967, 0);

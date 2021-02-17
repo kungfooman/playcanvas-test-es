@@ -1,12 +1,54 @@
 import pc from "./pc.js";
-
+import "../pcui/pcui.js";
 import {load_ammo} from "./load_ammo.js";
 import {load_helipad} from "./load_helipad.js";
 
+let canvas;
+let app;
+let scriptPreloader;
+let camera;
+let box;
+let light;
+let trigger;
+let box1;
+let box2;
+let box3;
+let cube;
+let example;
+let exampleScript;
+let orbitCamera;
+let keyboardInput;
+let mouseInput;
+let uiEntity;
+let uiScript;
+let uiAsset;
+let uiAssetProfile;
+
+function load_ui() {
+    uiAsset = new pc.Asset("UI HTML", "html", {
+        url: "./es5/ui.html"
+    });
+    app.assets.add(uiAsset);
+    uiAssetProfile = new pc.Asset("UI HTML", "texture", {
+        url: "./es5/profile.jpg"
+    });
+    app.assets.add(uiAssetProfile);
+
+    uiEntity = new pc.Entity("UI");
+    app.root.addChild(uiEntity);
+    uiEntity.addComponent("script");
+    uiScript = uiEntity.script.create("ui", {
+        attributes: {
+            html: uiAsset,
+            profile: uiAssetProfile
+        }
+    });
+}
+
 async function demo() {
     // create a PlayCanvas application
-    const canvas = document.getElementById('application');
-    const app = new pc.Application(canvas, {
+    canvas = document.getElementById('application');
+    app = new pc.Application(canvas, {
         mouse: new pc.Mouse(canvas),
         keyboard: new pc.Keyboard(canvas)
     });
@@ -29,7 +71,7 @@ async function demo() {
     window.addEventListener('resize', () => app.resizeCanvas());
 
     // create box entity
-    const box = new pc.Entity('cube');
+    box = new pc.Entity('cube');
     box.addComponent('model', {
         type: 'box'
     });
@@ -38,7 +80,7 @@ async function demo() {
     box.script.create('rotate');
 
     // create camera entity
-    const camera = new pc.Entity('camera');
+    camera = new pc.Entity('camera');
     camera.addComponent('camera', {
         clearColor: new pc.Color(0.1, 0.1, 0.1)
     });
@@ -46,16 +88,18 @@ async function demo() {
     camera.setPosition(0, 0, 3);
 
     // create directional light entity
-    const light = new pc.Entity('light');
+    light = new pc.Entity('light');
     light.addComponent('light');
     app.root.addChild(light);
     light.setEulerAngles(45, 0, 0);
+
+    load_ui();
 
     // rotate the box according to the delta time since the last frame
     //app.on('update', dt => box.rotate(10 * dt, 20 * dt, 30 * dt));
 
     function createBox(name) {
-        const box = new pc.Entity(name);
+        box = new pc.Entity(name);
         box.addComponent('model', {
             type: 'box'
         });
@@ -63,7 +107,7 @@ async function demo() {
         return box;
     }
     
-    const trigger = createBox("Trigger");
+    trigger = createBox("Trigger");
     trigger.setLocalPosition(0, -6.967, 0);
     trigger.setLocalScale(40, 0.2, 40);
     trigger.addComponent("collision", {
@@ -75,7 +119,7 @@ async function demo() {
         restitution: 0.5
     });
     
-    const box1 = createBox("Box 1");
+    box1 = createBox("Box 1");
     box1.setLocalPosition(-4.174, 2.428, 2.937);
     box1.setLocalEulerAngles(-28.58, 0, -34.25);
     box1.setLocalScale(8, 0.1, 8);
@@ -88,7 +132,7 @@ async function demo() {
         restitution: 0.5
     });
 
-    const box2 = createBox("Box 2");
+    box2 = createBox("Box 2");
     box2.setLocalPosition(-5.966, 1.56, -8.398);
     box2.setLocalEulerAngles(0.03, 6.33, 0.94);
     box2.setLocalScale(8, 0.1, 8);
@@ -101,7 +145,7 @@ async function demo() {
         restitution: 0.5
     });
 
-    const box3 = createBox("Box 3");
+    box3 = createBox("Box 3");
     box3.setLocalPosition(3.697, 0.896, -4.896);
     box3.setLocalEulerAngles(172.67, 6.9, -162.31);
     box3.setLocalScale(8, 0.1, 8);
@@ -114,7 +158,7 @@ async function demo() {
         restitution: 0.5
     });
     
-    const cube = createBox("Cube");
+    cube = createBox("Cube");
     cube.enabled = false;
     cube.addComponent("collision", {
         type: "box",
@@ -128,9 +172,9 @@ async function demo() {
 
     camera.addComponent("script");
 
-    const orbitCamera = camera.script.create('orbitCamera');
-    const keyboardInput = camera.script.create('keyboardInput');
-    const mouseInput = camera.script.create('mouseInput');
+    orbitCamera = camera.script.create('orbitCamera');
+    keyboardInput = camera.script.create('keyboardInput');
+    mouseInput = camera.script.create('mouseInput');
     orbitCamera.focusEntity = trigger;
     orbitCamera.distance = 50;
     orbitCamera.yaw = 50;
@@ -138,10 +182,10 @@ async function demo() {
 
     load_helipad(app);
 
-    const example = new pc.Entity("example");
+    example = new pc.Entity("example");
     app.root.addChild(example);
     example.addComponent("script");
-    const exampleScript = example.script.create("example");
+    exampleScript = example.script.create("example");
     
 
     // Nothing is exported by default, so assign objects to window manually for easy testing/debugging

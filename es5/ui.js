@@ -18,9 +18,9 @@ class Ui extends pc.ScriptType {
             grid: true
         });
         
-        container.style.position = 'relative';
-        container.style.height = '100%';
-        container.style.width = '100%';
+        container.style.position = 'absolute';
+        container.style.left = '0px';
+        container.style.top = '0px';
         
         document.body.appendChild(container.dom);
         
@@ -106,7 +106,7 @@ class Ui extends pc.ScriptType {
         
         container.dom.appendChild(media);
         
-        twttr.widgets.load();
+        //twttr.widgets.load();
         
         this.pane.appendChild(container.dom);
         
@@ -115,9 +115,13 @@ class Ui extends pc.ScriptType {
         image.src = url;
         image.width = 70;
         
-        const avatar = document.getElementById('avatar');
-        avatar.appendChild(image);
-        avatar.style['text-align'] = 'center';
+        var avatar = document.getElementById('avatar');
+        if (avatar) {
+            avatar.appendChild(image);
+            avatar.style['text-align'] = 'center';
+        } else {
+            console.warn("ui.js: avatar not found");
+        }
     }
     
 }
