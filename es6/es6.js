@@ -1,5 +1,3 @@
-import pc from "./pc.js";
-import "../pcui/pcui.js";
 import {load_ammo} from "./load_ammo.js";
 import {load_helipad} from "./load_helipad.js";
 

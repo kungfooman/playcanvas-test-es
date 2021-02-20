@@ -1,6 +1,5 @@
 /* jshint esversion: 6 */
 
-import pc from "./pc.js";
 import AmmoDebugDrawer from "./ammo-debug-drawer.js";
 
 export default class Example extends pc.ScriptType {
