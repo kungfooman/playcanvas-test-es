@@ -48,43 +48,34 @@ Example.prototype.generateCubes = function() {
     
     this.ready = true;
 }
-
 Example.prototype.spawnCube = function() {
     this.reset();
-    
     if (this.cubeIndex > this.cubes.length - 1) {
         this.allSpawned = true;
         return;
     }
-    
     const cube = this.cubes[this.cubeIndex++];
     cube.enabled = true;
+    this.app.root.addChild(cube);
 }
-
 Example.prototype.changeMode = function(mode) {
     if (!this.renderer) {
         return;
     }
     this.renderer.setMode(mode);
 }
-
 Example.prototype.update = function(dt) {
     if (!this.renderer) {
         return;
     }
-    
     this.renderer.update();
-    
     if (!this.ready || this.allSpawned) {
         return;
     }
-    
     this.time += dt;
-    
     if (this.time >= this.delay) {
         this.spawnCube();
     }
 }
-
 Example.CUBES_AMOUNT = 30;
 Example.SPAWN_HEIGHT = 10;
