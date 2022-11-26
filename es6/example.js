@@ -1,36 +1,38 @@
-/* jshint esversion: 6 */
-
-import AmmoDebugDrawer from "./ammo-debug-drawer.js";
-
-export default class Example extends pc.ScriptType {
-
+import * as pc from 'playcanvas';
+import { AmmoDebugDrawer } from "./ammo-debug-drawer.js";
+export class Example extends pc.ScriptType {
+    static registerName = 'example';
+    static _ = (
+        Example.attributes.add('layer', {
+            type: 'object', 
+            default: 0,
+            title: 'Layer', 
+            description: 'Which Layer to print the debug lines on'
+        })
+    );
+    static CUBES_AMOUNT = 30;
+    static SPAWN_HEIGHT = 10;
+    cubes = [];
+    cubeIndex = 0;
+    allSpawned = false;
     initialize() {
         this.renderer = new AmmoDebugDrawer(this.layer);
         this.renderer.enable();
-        
         this.bindEvents();
         this.generateCubes();
-        
-        this.cubeIndex = 0;
-        this.allSpawned = false;
         this.reset();
     }
-    
     bindEvents() {
         this.app.on('ui:mode-select', this.changeMode, this);
     }
-    
     reset() {
         this.time = 0;
         this.delay = pc.math.random(0, 1);        
     }
-    
     generateCubes() {
         const cube = this.app.root.findByName('Cube');
         const amount = Example.CUBES_AMOUNT;
         const height = Example.SPAWN_HEIGHT;
-        
-        this.cubes = [];
         for (let i = 0; i < amount; i++) {
             const clone = cube.clone();
             const x = pc.math.random(-8, 8);
@@ -42,57 +44,35 @@ export default class Example extends pc.ScriptType {
             clone.rigidbody.teleport(x, y, z, rx, ry, rz);
             this.cubes.push(clone);
         }
-        
         this.ready = true;
     }
-    
     spawnCube() {
         this.reset();
-        
         if (this.cubeIndex > this.cubes.length - 1) {
             this.allSpawned = true;
             return;
         }
-        
         const cube = this.cubes[this.cubeIndex++];
         cube.enabled = true;
+        this.app.root.addChild(cube);
     }
-    
     changeMode(mode) {
         if (!this.renderer) {
             return;
         }
         this.renderer.setMode(mode);
     }
-    
     update(dt) {
         if (!this.renderer) {
             return;
         }
-        
         this.renderer.update();
-        
         if (!this.ready || this.allSpawned) {
             return;
         }
-        
         this.time += dt;
-        
         if (this.time >= this.delay) {
             this.spawnCube();
         }
-    }
-    
+    }    
 }
-
-Example.attributes.add('layer', {
-    type: 'object', 
-    //default: ?, 
-    title: 'Layer', 
-    description: 'Which Layer to print the debug lines on'
-});
-
-pc.registerScript(Example, 'example');
-
-Example.CUBES_AMOUNT = 30;
-Example.SPAWN_HEIGHT = 10;

@@ -1,3 +1,7 @@
+import * as pc from 'playcanvas';
+/**
+ * @param {pc.Application} app - The app.
+ */
 export function load_helipad(app) {
     // Set a prefiltered cubemap as the skybox
     var cubemapAsset = new pc.Asset('helipad', 'cubemap', {

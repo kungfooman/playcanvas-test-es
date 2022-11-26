@@ -1,36 +1,37 @@
-/* jshint esversion: 6 */
-
-class Ui extends pc.ScriptType {
-
+import * as pc from 'playcanvas';
+export class Ui extends pc.ScriptType {
+    static registerName = 'ui';
+    static _ = (
+        this.attributes.add('html', {
+            type: 'asset',
+            assetType: 'html'
+        }),
+        this.attributes.add('profile', {
+            type: 'asset',
+            assetType: 'texture'
+        })
+    );
     initialize() {
         this.setupMainContainer();
         this.setupMainPane();
-        
         this.addRenderSettings();
         this.addDivider();
         this.addMediaInfo();
     }
-    
     setupMainContainer() {
         const { Container } = pcui;
-        
         const container = new Container({
             grid: true
         });
-        
         container.style.position = 'absolute';
         container.style.height = '100%';
         container.style.left = '0px';
         container.style.top = '0px';
-        
         document.body.appendChild(container.dom);
-        
         this.ui = container.dom;
     }
-    
     setupMainPane() {
         const { Container, Panel, Label } = pcui;
-        
         const panel = new Panel({
             flex: true,
             collapsible: true,
@@ -55,17 +56,14 @@ class Ui extends pc.ScriptType {
         this.ui.appendChild(panel.dom);
         this.pane = content.dom;
     }
-    
     addRenderSettings() {
         const { Panel, SelectInput } = pcui;
-        
         const panel = new Panel({
             flex: true,
             collapsible: false,
             headerText: 'Render Mode'
         });
         const content = panel.content;
-        
         const options = [
             { v: 0, t: 'Disable' },
             { v: 1, t: 'Wireframe' },
@@ -77,20 +75,16 @@ class Ui extends pc.ScriptType {
             options,
             value: 1
         });
-        
         input.on('change', mode => { this.app.fire('ui:mode-select', mode); });
-        
         content.dom.appendChild(input.dom);
         this.pane.appendChild(panel.dom);
     }
-    
     addDivider() {
         const { Divider } = pcui;
         
         const divider = new Divider();
         this.pane.appendChild(divider.dom);
     }
-    
     setMedia() {
         if (!this.html) {
             console.warn("ui.js: this.html is missing");
@@ -98,7 +92,6 @@ class Ui extends pc.ScriptType {
         }
         this.media.innerHTML = this.html.resource || '';
     }
-
     setProfile() {
         let image;
         if (this.profile && this.profile.loaded) {
@@ -119,40 +112,20 @@ class Ui extends pc.ScriptType {
             return;
         }
     }
-
     addMediaInfo() {
         const { Container } = pcui;
-        
         const container = new Container({
             flex: true,
         });
-        
         this.media = document.createElement('div');
         this.setMedia();
-        
         container.style.marginTop = 'auto';
         container.style.marginBottom = 'auto';
         container.style.marginLeft = 'auto';
         container.style.marginRight = 'auto';
-        
         container.dom.appendChild(this.media);
-        
         //twttr.widgets.load();
-        
         this.pane.appendChild(container.dom);
         this.setProfile();
     }
-
 }
-
-pc.registerScript(Ui, 'ui');
-
-Ui.attributes.add('html', {
-    type: 'asset',
-    assetType: 'html'
-});
-
-Ui.attributes.add('profile', {
-    type: 'asset',
-    assetType: 'texture'
-});
