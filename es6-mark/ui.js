@@ -1,16 +1,14 @@
-import * as pc from 'playcanvas';
-export class Ui extends pc.ScriptType {
-    static registerName = 'ui';
-    static _ = (
-        this.attributes.add('html', {
+export class Ui {
+    static attributes = {
+        html: {
             type: 'asset',
             assetType: 'html'
-        }),
-        this.attributes.add('profile', {
+        },
+        profile: {
             type: 'asset',
             assetType: 'texture'
-        })
-    );
+        }
+    };
     initialize() {
         this.setupMainContainer();
         this.setupMainPane();

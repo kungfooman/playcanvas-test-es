@@ -1,14 +1,12 @@
-import * as pc from 'playcanvas';
-export class Rotate extends pc.ScriptType {
-    static registerName = 'rotate';
+export class Rotate {
     /** @type {number} */
     speed;
-    static _ = (
-        this.attributes.add('speed', {
+    static attributes = {
+        speed: {
             type: 'number',
             default: 10
-        })
-    );
+        }
+    };
     // Choose local rotation or world rotation.
     local = false; 
     /**

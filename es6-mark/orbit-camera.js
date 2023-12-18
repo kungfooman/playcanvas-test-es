@@ -1,11 +1,11 @@
 import * as pc from 'playcanvas';
-export class KeyboardInput extends pc.ScriptType {
+export class KeyboardInput {
     static registerName = 'keyboardInput';
     /** @type {OrbitCamera} */
     orbitCamera;
     // initialize code called once per entity
     initialize() {
-        this.orbitCamera = this.entity.script.orbitCamera;
+        this.orbitCamera = this.entity.esmscript.get('OrbitCamera');
         this.app.keyboard.on(pc.EVENT_KEYDOWN, this.onKeyDown, this);
     }
     postInitialize() {
@@ -31,7 +31,8 @@ export class KeyboardInput extends pc.ScriptType {
         }
     }
 }
-export class MouseInput extends pc.ScriptType {
+
+export class MouseInput {
     static registerName = 'mouseInput';
     /** @type {MouseInput} */
     static instance;
@@ -42,24 +43,24 @@ export class MouseInput extends pc.ScriptType {
     orbitSensitivity;
     /** @type {number} */
     distanceSensitivity;
-    static _ = (
-        this.attributes.add('orbitSensitivity', {
+    static attributes = {
+        orbitSensitivity: {
             type: 'number',
             default: 0.3,
             title: 'Orbit Sensitivity',
             description: 'How fast the camera moves around the orbit. Higher is faster'
-        }),
-        this.attributes.add('distanceSensitivity', {
+        },
+        distanceSensitivity: {
             type: 'number',
             default: 0.15,
             title: 'Distance Sensitivity',
             description: 'How fast the camera moves in and out. Higher is faster'
-        })
-    );
+        }
+    };
     // initialize code called once per entity
     initialize() {
         this.constructor.instance = this;
-        this.orbitCamera = this.entity.script.orbitCamera;
+        this.orbitCamera = this.entity.esmscript.get('OrbitCamera');
         if (this.orbitCamera) {
             var self = this;
             var onMouseOut = function (e) {
@@ -71,14 +72,6 @@ export class MouseInput extends pc.ScriptType {
             this.app.mouse.on(pc.EVENT_MOUSEWHEEL, this.onMouseWheel, this);
             // Listen to when the mouse travels out of the window
             window.addEventListener('mouseout', onMouseOut, false);
-            // Remove the listeners so if this entity is destroyed
-            this.on('destroy', function() {
-                this.app.mouse.off(pc.EVENT_MOUSEDOWN , this.onMouseDown , this);
-                this.app.mouse.off(pc.EVENT_MOUSEUP   , this.onMouseUp   , this);
-                this.app.mouse.off(pc.EVENT_MOUSEMOVE , this.onMouseMove , this);
-                this.app.mouse.off(pc.EVENT_MOUSEWHEEL, this.onMouseWheel, this);
-                window.removeEventListener('mouseout', onMouseOut, false);
-            });
         }
         // Disabling the context menu stops the browser displaying a menu when
         // you right-click the page
@@ -87,6 +80,14 @@ export class MouseInput extends pc.ScriptType {
         this.panButtonDown = false;
         this.lastPoint = new pc.Vec2();
     }
+    // Remove the listeners so if this entity is destroyed
+    destroy() {
+        this.app.mouse.off(pc.EVENT_MOUSEDOWN , this.onMouseDown , this);
+        this.app.mouse.off(pc.EVENT_MOUSEUP   , this.onMouseUp   , this);
+        this.app.mouse.off(pc.EVENT_MOUSEMOVE , this.onMouseMove , this);
+        this.app.mouse.off(pc.EVENT_MOUSEWHEEL, this.onMouseWheel, this);
+        window.removeEventListener('mouseout', onMouseOut, false);
+    };
     pan(screenPoint) {
         var fromWorldPoint = MouseInput.fromWorldPoint;
         var toWorldPoint = MouseInput.toWorldPoint;
@@ -145,22 +146,21 @@ export class MouseInput extends pc.ScriptType {
         this.panButtonDown = false;
     }
 }
-export class TouchInput extends pc.ScriptType {
-    static registerName = 'touchInput';
-    static _ = (
-        this.attributes.add('orbitSensitivity', {
+export class TouchInput {
+    static attributes = {
+        orbitSensitivity: {
             type: 'number', 
             default: 0.4, 
             title: 'Orbit Sensitivity', 
             description: 'How fast the camera moves around the orbit. Higher is faster'
-        }),
-        this.attributes.add('distanceSensitivity', {
+        },
+        distanceSensitivity: {
             type: 'number', 
             default: 0.2, 
             title: 'Distance Sensitivity', 
             description: 'How fast the camera moves in and out. Higher is faster'
-        })
-    );
+        }
+    };
     /** @type {OrbitCamera} */
     orbitCamera;
     // initialize code called once per entity
@@ -249,7 +249,31 @@ export class TouchInput extends pc.ScriptType {
         }
     }
 }
-export class OrbitCamera extends pc.ScriptType {
+const attributes = {
+    distanceMax: { type: 'number', default: 0, title: 'Distance Max', description: 'Setting this at 0 will give an infinite distance limit' },
+    distanceMin: { type: 'number', default: 0, title: 'Distance Min' },
+    pitchAngleMax: { type: 'number', default: 90, title: 'Pitch Angle Max (degrees)' },
+    pitchAngleMin: { type: 'number', default: -90, title: 'Pitch Angle Min (degrees)' },
+    inertiaFactor: {
+        type: 'number',
+        default: 0,
+        title: 'Inertia Factor',
+        description: 'Higher value means that the camera will continue moving after the user has stopped dragging. 0 is fully responsive.'
+    },
+    focusEntity: {
+        type: 'entity',
+        title: 'Focus Entity',
+        description: 'Entity for the camera to focus on. If blank, then the camera will use the whole scene'
+    },
+    frameOnStart: {
+        type: 'boolean',
+        default: true,
+        title: 'Frame on Start',
+        description: 'Frames the entity or scene at the start of the application."'
+    }
+};
+export class OrbitCamera {
+    static attributes = attributes;
     static registerName = 'orbitCamera';
     // Property to get and set the distance between the pivot point and camera
     // Clamped between this.distanceMin and this.distanceMax
@@ -294,13 +318,73 @@ export class OrbitCamera extends pc.ScriptType {
     set pivotPoint(value) {
         this._pivotPoint.copy(value);
     }
+    // Reapply the clamps if they are changed in the editor
+    set distanceMin(value) {
+        this._distanceMin = value;
+        this._distance = this._clampDistance(this._distance);
+    }
+
+    get distanceMin() {
+        return this._distanceMin;
+    }
+
+    set distanceMax(value) {
+        this._distanceMax = value;
+        this._distance = this._clampDistance(this._distance);
+    }
+
+    get distanceMax() {
+        return this._distanceMax;
+    }
+
+    set pitchAngleMin(value) {
+        this._pitchAngleMin = value;
+        this._pitch = this._clampPitchAngle(this._pitch);
+    }
+
+    get pitchAngleMin() {
+        return this._pitchAngleMin;
+    }
+
+    set pitchAngleMax(value) {
+        this._pitchAngleMax = value;
+        this._pitch = this._clampPitchAngle(this._pitch);
+    }
+
+    get pitchAngleMax() {
+        return this._pitchAngleMax;
+    }
+
+    set frameOnStart(value) {
+        this._frameOnStart = value;
+        if (value && this.app) {
+            this.focus(this.focusEntity || this.app.root);
+        }
+    }
+
+    get frameOnStart() {
+        return this._frameOnStart;
+    }
+
+    /** @type {pc.Entity} */
+    _focusEntity;
+
+    /** @type {pc.Entity} */
+    set focusEntity(value) {
+        this._focusEntity = value;
+        if (this.frameOnStart) {
+            this.focus(value || this.app.root);
+        } else {
+            this.resetAndLookAtEntity(this.entity.getPosition(), value || this.app.root);
+        }
+    }
     // Moves the camera to look at an entity and all its children so they are all in the view
     focus(focusEntity) {
         // Calculate an bounding box that encompasses all the models to frame in the camera view
         this._buildAabb(focusEntity, 0);
         var halfExtents = this._modelsAabb.halfExtents;
         var distance = Math.max(halfExtents.x, Math.max(halfExtents.y, halfExtents.z));
-        distance = (distance / Math.tan(0.5 * this.entity.camera.fov * math.DEG_TO_RAD));
+        distance = (distance / Math.tan(0.5 * this.entity.camera.fov * pc.math.DEG_TO_RAD));
         distance = (distance * 2);
         this.distance = distance;
         if (this.entity.camera) {
@@ -342,11 +426,8 @@ export class OrbitCamera extends pc.ScriptType {
     }
     // Private methods
     initialize() {
-        var self = this;
-        var onWindowResize = function () {
-            self._checkAspectRatio();
-        };
-        window.addEventListener('resize', onWindowResize, false);
+        this.checkAspectRatioBound = _ => this._checkAspectRatio();
+        window.addEventListener('resize', this.checkAspectRatioBound, false);
         this._checkAspectRatio();
         // Find all the models in the scene that are under the focused entity
         this._modelsAabb = new pc.BoundingBox();
@@ -375,35 +456,9 @@ export class OrbitCamera extends pc.ScriptType {
             this._distance = this._clampDistance(distanceBetween.length());
         }
         this._targetDistance = this._distance;
-        // Reapply the clamps if they are changed in the editor
-        this.on('attr:distanceMin', function (value, prev) {
-            this._targetDistance = this._clampDistance(this._distance);
-        });
-        this.on('attr:distanceMax', function (value, prev) {
-            this._targetDistance = this._clampDistance(this._distance);
-        });
-        this.on('attr:pitchAngleMin', function (value, prev) {
-            this._targetPitch = this._clampPitchAngle(this._pitch);
-        });
-        this.on('attr:pitchAngleMax', function (value, prev) {
-            this._targetPitch = this._clampPitchAngle(this._pitch);
-        });
-        // Focus on the entity if we change the focus entity
-        this.on('attr:focusEntity', function (value, prev) {
-            if (this.frameOnStart) {
-                this.focus(value || this.app.root);
-            } else {
-                this.resetAndLookAtEntity(this.entity.getPosition(), value || this.app.root);
-            }
-        });
-        this.on('attr:frameOnStart', function (value, prev) {
-            if (value) {
-                this.focus(this.focusEntity || this.app.root);
-            }
-        });
-        this.on('destroy', function() {
-            window.removeEventListener('resize', onWindowResize, false);
-        });
+    }
+    destroy() {
+        window.removeEventListener('resize', this.onWindowResizeBound, false);
     }
     update(dt) {
         // Add inertia, if any
@@ -481,24 +536,3 @@ export class OrbitCamera extends pc.ScriptType {
         return Math.atan2(transformedForward.y, -transformedForward.z) * pc.math.RAD_TO_DEG;
     }
 }
-OrbitCamera.attributes.add('distanceMax', {type: 'number', default: 0, title: 'Distance Max', description: 'Setting this at 0 will give an infinite distance limit'});
-OrbitCamera.attributes.add('distanceMin', {type: 'number', default: 0, title: 'Distance Min'});
-OrbitCamera.attributes.add('pitchAngleMax', {type: 'number', default: 90, title: 'Pitch Angle Max (degrees)'});
-OrbitCamera.attributes.add('pitchAngleMin', {type: 'number', default: -90, title: 'Pitch Angle Min (degrees)'});
-OrbitCamera.attributes.add('inertiaFactor', {
-    type: 'number',
-    default: 0,
-    title: 'Inertia Factor',
-    description: 'Higher value means that the camera will continue moving after the user has stopped dragging. 0 is fully responsive.'
-});
-OrbitCamera.attributes.add('focusEntity', {
-    type: 'entity',
-    title: 'Focus Entity',
-    description: 'Entity for the camera to focus on. If blank, then the camera will use the whole scene'
-});
-OrbitCamera.attributes.add('frameOnStart', {
-    type: 'boolean',
-    default: false,
-    title: 'Frame on Start',
-    description: 'Frames the entity or scene at the start of the application."'
-});

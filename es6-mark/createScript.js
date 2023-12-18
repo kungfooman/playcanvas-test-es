@@ -19,14 +19,7 @@ export function createScript(entity, script, args) {
     return;
   }
   if (!entity.script) {
-    entity.addComponent('script');
+    entity.addComponent('esmscript');
   }
-  if (!script.registerName) {
-    console.warn("createScript> demanding script.registerName for ", script);
-    return;
-  }
-  if (!pc.app.scripts.has(script)) {
-    pc.registerScript(script, script.registerName);
-  }
-  return entity.script.create(script.registerName, args);
+  return entity.esmscript.add(script, args);
 }

@@ -1,15 +1,15 @@
 import * as pc from 'playcanvas';
 import { AmmoDebugDrawer } from "./ammo-debug-drawer.js";
-export class Example extends pc.ScriptType {
-    static registerName = 'example';
-    static _ = (
-        Example.attributes.add('layer', {
-            type: 'object', 
-            default: 0,
-            title: 'Layer', 
+export class Example {
+    static attributes = {
+        layer: {
+            type: 'object',
+            optional: true,
+            default: null,
+            title: 'Layer',
             description: 'Which Layer to print the debug lines on'
-        })
-    );
+        }
+    };
     static CUBES_AMOUNT = 30;
     static SPAWN_HEIGHT = 10;
     cubes = [];

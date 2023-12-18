@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 import { Example } from "./example.js";
-export class Trigger extends pc.ScriptType {
+export class Trigger {
     static registerName = 'trigger';
     initialize() {
         this.bindEvents();
